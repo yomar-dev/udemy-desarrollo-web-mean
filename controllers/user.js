@@ -100,7 +100,7 @@ function updateUser(req, res){
 		if(err){
 			res.status(500).send({ message: 'Error al actualizar la información del usuario' });
 		}else{
-			if(!userUpdate){
+			if(!userUpdated){
 				res.status(400).send({ message: 'No se ha podido actualizar la información del usuario' });
 			}else{
 				res.status(200).send({ user: userUpdated });
@@ -109,10 +109,39 @@ function updateUser(req, res){
 	});
 }
 
+function uploadImage(req, res){
+	var userId = req.params.id;
+	var file_name = 'No subida';
+
+	if(req.files){
+		var file_path = req.files.image.path;
+		var file_split = file_path.split('/');
+		var file_name = file_split[2];
+
+		var ext_split = file_name.split('.');
+		var file_ext = ext_split[1];
+
+		if(file_ext == 'png' || file_ext == 'jpg' || file_ext == 'jpeg' || file_ext == 'gif'){
+			User.findByIdAndUpdate(userId, { image: file_name }, (err, userUpdated) => {
+				if(!userUpdated){
+					res.status(400).send({ message: 'No se ha podido actualizar la información del usuario' });
+				}else{
+					res.status(200).send({ user: userUpdated });
+				}
+			});
+		}else{
+			res.status(200).send({ message: 'Sólo se permiten archivos PNG, JPG y GIF' })
+		}
+	}else{
+		res.status(200).send({ message: 'No se ha subido la imagen' });
+	}
+}
+
 
 module.exports = {
     pruebas,
     saveUser,
     loginUser,
-    updateUser
+    updateUser,
+    uploadImage
 };
