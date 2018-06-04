@@ -7,4 +7,9 @@ var api = express.Router();
 
 api.get('/prueba-controlador', UserController.pruebas);
 
+/**
+ * Registrar un usuario
+ */
+api.post('/register', UserController.saveUser);
+
 module.exports = api;
